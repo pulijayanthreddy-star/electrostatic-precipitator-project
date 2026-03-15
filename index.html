@@ -2,25 +2,41 @@
 <html>
 <head>
 
-<title>Electrostatic Precipitator 3D Simulator</title>
+<title>Electrostatic Precipitator Simulator</title>
 
 <style>
 
 body{
 margin:0;
+font-family:Arial;
 background:#111;
 color:white;
-font-family:Arial;
-overflow:hidden;
+}
+
+.container{
+display:flex;
+height:100vh;
+}
+
+.simulation{
+flex:2;
+background:black;
+}
+
+.theory{
+flex:1;
+background:#1a1a1a;
+padding:20px;
+overflow-y:auto;
 }
 
 #panel{
 position:absolute;
 top:10px;
 left:10px;
-background:rgba(0,0,0,0.7);
-padding:15px;
-border-radius:8px;
+background:rgba(0,0,0,0.6);
+padding:10px;
+border-radius:6px;
 }
 
 </style>
@@ -29,26 +45,82 @@ border-radius:8px;
 
 <body>
 
+<div class="container">
+
+<div class="simulation" id="simArea"></div>
+
+<div class="theory">
+
+<h1>Electrostatic Precipitator</h1>
+
+<h2>Introduction</h2>
+<p>
+An electrostatic precipitator (ESP) is a pollution control device used to remove
+dust particles from industrial exhaust gases using electrostatic forces.
+</p>
+
+<h2>Working Principle</h2>
+
+<p>
+1. Dust-laden gas enters the chamber.
+</p>
+
+<p>
+2. High voltage applied to the ionizing wire produces corona discharge.
+</p>
+
+<p>
+3. Dust particles become electrically charged.
+</p>
+
+<p>
+4. Electric field moves the particles toward collection plates.
+</p>
+
+<p>
+5. Dust accumulates on plates and clean air exits.
+</p>
+
+<h2>Main Components</h2>
+
+<ul>
+<li>Discharge electrode (ionizing wire)</li>
+<li>Collection plates</li>
+<li>High voltage DC supply</li>
+<li>Gas flow chamber</li>
+</ul>
+
+<h2>Applications</h2>
+
+<ul>
+<li>Thermal power plants</li>
+<li>Cement industries</li>
+<li>Steel plants</li>
+<li>Chemical factories</li>
+</ul>
+
+</div>
+
+</div>
+
 <div id="panel">
 
-<h3>ESP Control Panel</h3>
-
-Voltage (DC)
+Voltage
 <input type="range" id="voltage" min="1" max="100" value="40">
 
-<p>Collected Particles: <span id="count">0</span></p>
-
+<p>Collected: <span id="count">0</span></p>
 <p>Efficiency: <span id="eff">0</span>%</p>
 
 <p>
-🔴 Neutral dust<br>
-🔵 Charged particles<br>
-🟢 Collected particles
+🔴 Dust<br>
+🔵 Charged<br>
+🟢 Collected
 </p>
 
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
 
 <script>
@@ -60,15 +132,16 @@ const scene=new THREE.Scene()
 
 const camera=new THREE.PerspectiveCamera(
 70,
-window.innerWidth/window.innerHeight,
+window.innerWidth/ window.innerHeight,
 0.1,
 1000
 )
 
 const renderer=new THREE.WebGLRenderer({antialias:true})
-renderer.setSize(window.innerWidth,window.innerHeight)
 
-document.body.appendChild(renderer.domElement)
+renderer.setSize(window.innerWidth*0.66,window.innerHeight)
+
+document.getElementById("simArea").appendChild(renderer.domElement)
 
 camera.position.set(40,20,60)
 
@@ -76,7 +149,9 @@ const controls=new THREE.OrbitControls(camera,renderer.domElement)
 controls.enableDamping=true
 
 const light=new THREE.PointLight(0xffffff,1)
+
 light.position.set(20,30,20)
+
 scene.add(light)
 
 const chamberGeo=new THREE.BoxGeometry(90,30,30)
@@ -88,9 +163,11 @@ opacity:0.15
 })
 
 const chamber=new THREE.Mesh(chamberGeo,chamberMat)
+
 scene.add(chamber)
 
 const plateGeo=new THREE.BoxGeometry(1,28,22)
+
 const plateMat=new THREE.MeshStandardMaterial({color:0xaaaaaa})
 
 let plates=[]
@@ -108,6 +185,7 @@ plates.push(plate)
 }
 
 const wireGeo=new THREE.CylinderGeometry(0.2,0.2,26,16)
+
 const wireMat=new THREE.MeshStandardMaterial({color:0xffff00})
 
 const wire=new THREE.Mesh(wireGeo,wireMat)
@@ -125,9 +203,7 @@ const dir=new THREE.Vector3(1,0,0)
 
 const origin=new THREE.Vector3(-30,i*3-15,0)
 
-const length=5
-
-const arrow=new THREE.ArrowHelper(dir,origin,length,0x00ff00)
+const arrow=new THREE.ArrowHelper(dir,origin,5,0x00ff00)
 
 scene.add(arrow)
 
@@ -140,6 +216,7 @@ let particles=[]
 function createParticle(){
 
 const geo=new THREE.SphereGeometry(0.35,8,8)
+
 const mat=new THREE.MeshBasicMaterial({color:0xff4444})
 
 const p=new THREE.Mesh(geo,mat)
