@@ -1,19 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Electrostatic Precipitator Project</title>
+<title>Electrostatic Precipitator Simulation</title>
+
+<style>
+
+body{
+font-family: Arial;
+text-align:center;
+background:#f2f2f2;
+}
+
+canvas{
+background:white;
+margin-top:20px;
+}
+
+</style>
+
 </head>
 
 <body>
-<h1>Electrostatic Precipitator</h1>
 
-<p>This project demonstrates how electrostatic forces remove dust and smoke particles from air.</p>
+<h1>Electrostatic Precipitator Simulation</h1>
 
-<h2>Working Principle</h2>
-<p>High voltage wires charge particles in air. The charged particles move toward collection plates and stick to them.</p>
-<h2>Electrostatic Precipitator Simulation</h2>
+<p>This simulation shows how charged dust particles move toward collection plates.</p>
 
-<canvas id="sim" width="600" height="300" style="border:1px solid black;"></canvas>
+<canvas id="sim" width="700" height="300"></canvas>
+
 <script>
 
 const canvas = document.getElementById("sim");
@@ -21,38 +36,57 @@ const ctx = canvas.getContext("2d");
 
 let particles = [];
 
-for(let i=0;i<40;i++){
-    particles.push({
-        x:Math.random()*600,
-        y:Math.random()*300
-    });
+for(let i=0;i<60;i++){
+particles.push({
+x:Math.random()*150,
+y:Math.random()*300,
+collected:false
+});
 }
 
 function draw(){
 
-    ctx.clearRect(0,0,600,300);
+ctx.clearRect(0,0,700,300);
 
-    ctx.fillStyle="red";
+ctx.fillStyle="black";
+ctx.fillText("Dust Inlet",30,20);
 
-    for(let p of particles){
+ctx.fillStyle="gray";
 
-        p.x += 1;
+ctx.fillRect(350,0,5,300);
+ctx.fillRect(600,0,5,300);
 
-        if(p.x > 300){
-            p.y += (150-p.y)*0.05;
-        }
+ctx.fillStyle="red";
 
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,3,0,Math.PI*2);
-        ctx.fill();
+for(let p of particles){
 
-        if(p.x>600){
-            p.x=0;
-            p.y=Math.random()*300;
-        }
-    }
+if(!p.collected){
 
-    requestAnimationFrame(draw);
+p.x += 1.5;
+
+if(p.x > 350){
+p.x += (350 - p.x)*0.05;
+}
+
+if(Math.abs(p.x-350) < 3){
+p.collected = true;
+}
+
+}
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,3,0,Math.PI*2);
+ctx.fill();
+
+if(p.x > 690){
+p.x = Math.random()*150;
+p.y = Math.random()*300;
+p.collected=false;
+}
+
+}
+
+requestAnimationFrame(draw);
 }
 
 draw();
@@ -60,5 +94,5 @@ draw();
 </script>
 
 </body>
-</html>
 
+</html>
