@@ -40,6 +40,12 @@ Voltage (DC)
 
 <p>Efficiency: <span id="eff">0</span>%</p>
 
+<p>
+🔴 Neutral dust<br>
+🔵 Charged particles<br>
+🟢 Collected particles
+</p>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -60,7 +66,6 @@ window.innerWidth/window.innerHeight,
 )
 
 const renderer=new THREE.WebGLRenderer({antialias:true})
-
 renderer.setSize(window.innerWidth,window.innerHeight)
 
 document.body.appendChild(renderer.domElement)
@@ -86,7 +91,6 @@ const chamber=new THREE.Mesh(chamberGeo,chamberMat)
 scene.add(chamber)
 
 const plateGeo=new THREE.BoxGeometry(1,28,22)
-
 const plateMat=new THREE.MeshStandardMaterial({color:0xaaaaaa})
 
 let plates=[]
@@ -104,7 +108,6 @@ plates.push(plate)
 }
 
 const wireGeo=new THREE.CylinderGeometry(0.2,0.2,26,16)
-
 const wireMat=new THREE.MeshStandardMaterial({color:0xffff00})
 
 const wire=new THREE.Mesh(wireGeo,wireMat)
@@ -113,27 +116,6 @@ wire.rotation.z=Math.PI/2
 wire.position.x=-5
 
 scene.add(wire)
-
-let fieldLines=[]
-
-for(let i=0;i<20;i++){
-
-const points=[]
-
-points.push(new THREE.Vector3(-5,Math.random()*20-10,0))
-points.push(new THREE.Vector3(10 + Math.random()*20,Math.random()*20-10,0))
-
-const geo=new THREE.BufferGeometry().setFromPoints(points)
-
-const mat=new THREE.LineBasicMaterial({color:0x00ffff})
-
-const line=new THREE.Line(geo,mat)
-
-scene.add(line)
-
-fieldLines.push(line)
-
-}
 
 let arrows=[]
 
@@ -158,7 +140,6 @@ let particles=[]
 function createParticle(){
 
 const geo=new THREE.SphereGeometry(0.35,8,8)
-
 const mat=new THREE.MeshBasicMaterial({color:0xff4444})
 
 const p=new THREE.Mesh(geo,mat)
@@ -166,6 +147,8 @@ const p=new THREE.Mesh(geo,mat)
 p.position.x=-40
 p.position.y=Math.random()*20-10
 p.position.z=Math.random()*20-10
+
+p.charged=false
 
 scene.add(p)
 
@@ -189,13 +172,19 @@ particles.forEach(p=>{
 
 p.position.x+=0.35
 
+if(p.position.x>-6 && !p.charged){
+
+p.material.color.set(0x3399ff)
+
+p.charged=true
+
+}
+
 let field=voltage*0.003
 
 if(p.position.x>-10){
 
-let targetPlate=10
-
-p.position.x+=(targetPlate-p.position.x)*field
+p.position.x+=(10-p.position.x)*field
 
 p.position.y+=(0-p.position.y)*field*0.25
 
@@ -204,6 +193,8 @@ p.position.y+=(0-p.position.y)*field*0.25
 plates.forEach(pl=>{
 
 if(Math.abs(p.position.x-pl.position.x)<0.7){
+
+p.material.color.set(0x00ff66)
 
 collected++
 
@@ -216,6 +207,10 @@ document.getElementById("eff").innerText=eff
 p.position.x=-40
 p.position.y=Math.random()*20-10
 p.position.z=Math.random()*20-10
+
+p.material.color.set(0xff4444)
+
+p.charged=false
 
 }
 
