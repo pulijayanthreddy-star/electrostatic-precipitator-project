@@ -2,15 +2,16 @@
 <html>
 <head>
 
-<title>3D Electrostatic Precipitator Simulator</title>
+<title>Electrostatic Precipitator 3D Simulator</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial;
-background:#101010;
+background:#111;
 color:white;
+font-family:Arial;
+overflow:hidden;
 }
 
 #panel{
@@ -22,11 +23,6 @@ padding:15px;
 border-radius:8px;
 }
 
-label{
-display:block;
-margin-top:10px;
-}
-
 </style>
 
 </head>
@@ -35,34 +31,25 @@ margin-top:10px;
 
 <div id="panel">
 
-<h3>ESP Controls</h3>
+<h3>ESP Control Panel</h3>
 
-<label>
-Voltage
+Voltage (DC)
 <input type="range" id="voltage" min="1" max="100" value="40">
-</label>
 
-<label>
-Mode
-<select id="mode">
-<option value="dc">DC</option>
-<option value="ac">AC</option>
-</select>
-</label>
+<p>Collected Particles: <span id="count">0</span></p>
 
-<button onclick="running=true">Start</button>
-<button onclick="running=false">Stop</button>
-
-<p>Collected particles: <span id="count">0</span></p>
+<p>Efficiency: <span id="eff">0</span>%</p>
 
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+
 <script>
 
-let running=true
 let collected=0
+let totalParticles=0
 
 const scene=new THREE.Scene()
 
@@ -74,51 +61,97 @@ window.innerWidth/window.innerHeight,
 )
 
 const renderer=new THREE.WebGLRenderer({antialias:true})
+
 renderer.setSize(window.innerWidth,window.innerHeight)
+
 document.body.appendChild(renderer.domElement)
 
-camera.position.z=50
-camera.position.y=10
+camera.position.set(40,20,60)
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement)
+
+controls.enableDamping=true
 
 const light=new THREE.PointLight(0xffffff,1)
-light.position.set(20,20,20)
+
+light.position.set(20,30,20)
+
 scene.add(light)
 
-const chamber=new THREE.BoxGeometry(80,30,30)
-const chamberMaterial=new THREE.MeshBasicMaterial({
-color:0x333333,
-wireframe:true
+const chamberGeo=new THREE.BoxGeometry(80,30,30)
+
+const chamberMat=new THREE.MeshBasicMaterial({
+color:0x55aaff,
+transparent:true,
+opacity:0.15
 })
 
-const box=new THREE.Mesh(chamber,chamberMaterial)
-scene.add(box)
+const chamber=new THREE.Mesh(chamberGeo,chamberMat)
 
-const plateGeometry=new THREE.BoxGeometry(1,28,20)
-const plateMaterial=new THREE.MeshStandardMaterial({color:0x888888})
+scene.add(chamber)
 
-const plate1=new THREE.Mesh(plateGeometry,plateMaterial)
-plate1.position.x=5
-scene.add(plate1)
+const plateGeo=new THREE.BoxGeometry(1,28,20)
 
-const plate2=new THREE.Mesh(plateGeometry,plateMaterial)
-plate2.position.x=25
-scene.add(plate2)
+const plateMat=new THREE.MeshStandardMaterial({color:0x888888})
+
+const plate=new THREE.Mesh(plateGeo,plateMat)
+
+plate.position.x=10
+
+scene.add(plate)
+
+const wireGeo=new THREE.CylinderGeometry(0.2,0.2,25,16)
+
+const wireMat=new THREE.MeshStandardMaterial({color:0xffff00})
+
+const wire=new THREE.Mesh(wireGeo,wireMat)
+
+wire.rotation.z=Math.PI/2
+
+wire.position.x=-5
+
+scene.add(wire)
+
+let fieldLines=[]
+
+for(let i=0;i<15;i++){
+
+const points=[]
+
+points.push(new THREE.Vector3(-5,Math.random()*20-10,0))
+points.push(new THREE.Vector3(10,Math.random()*20-10,0))
+
+const geo=new THREE.BufferGeometry().setFromPoints(points)
+
+const mat=new THREE.LineBasicMaterial({color:0x00ffff})
+
+const line=new THREE.Line(geo,mat)
+
+scene.add(line)
+
+fieldLines.push(line)
+
+}
 
 let particles=[]
 
 function createParticle(){
 
-const geometry=new THREE.SphereGeometry(0.25,8,8)
-const material=new THREE.MeshBasicMaterial({color:0xff4444})
+const geo=new THREE.SphereGeometry(0.3,8,8)
 
-const p=new THREE.Mesh(geometry,material)
+const mat=new THREE.MeshBasicMaterial({color:0xff4444})
+
+const p=new THREE.Mesh(geo,mat)
 
 p.position.x=-35
 p.position.y=Math.random()*20-10
 p.position.z=Math.random()*20-10
 
 scene.add(p)
+
 particles.push(p)
+
+totalParticles++
 
 }
 
@@ -128,30 +161,32 @@ function animate(){
 
 requestAnimationFrame(animate)
 
+controls.update()
+
 let voltage=document.getElementById("voltage").value
-let mode=document.getElementById("mode").value
 
 particles.forEach(p=>{
 
-if(!running) return
-
-p.position.x+=0.3
+p.position.x+=0.35
 
 let field=voltage*0.003
 
-if(mode==="ac") field*=Math.sin(Date.now()*0.005)
-
 if(p.position.x>-10){
 
-p.position.x+=(5-p.position.x)*field
+p.position.x+=(10-p.position.x)*field
 p.position.y+=(0-p.position.y)*field*0.2
 
 }
 
-if(Math.abs(p.position.x-5)<0.5){
+if(Math.abs(p.position.x-10)<0.6){
 
 collected++
+
 document.getElementById("count").innerText=collected
+
+let eff=Math.floor((collected/totalParticles)*100)
+
+document.getElementById("eff").innerText=eff
 
 p.position.x=-35
 p.position.y=Math.random()*20-10
