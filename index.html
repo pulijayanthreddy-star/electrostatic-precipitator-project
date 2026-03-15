@@ -2,14 +2,14 @@
 <html>
 
 <head>
-<title>Electrostatic Precipitator Project</title>
+<title>Electrostatic Precipitator Simulation</title>
 
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
+background:#f4f4f4;
 margin:40px;
-background:#f5f5f5;
 }
 
 nav{
@@ -21,14 +21,20 @@ margin-right:15px;
 font-weight:bold;
 text-decoration:none;
 color:#003366;
+cursor:pointer;
 }
 
 .section{
 background:white;
 padding:25px;
-margin-bottom:40px;
+margin-bottom:30px;
 border-radius:8px;
 box-shadow:0 2px 10px rgba(0,0,0,0.2);
+}
+
+canvas{
+border:2px solid black;
+background:white;
 }
 
 </style>
@@ -37,15 +43,19 @@ box-shadow:0 2px 10px rgba(0,0,0,0.2);
 
 <body>
 
-<h1>Electrostatic Precipitator</h1>
+<h1>Electrostatic Precipitator Project</h1>
 
 <nav>
-<a href="#home">Home</a>
-<a href="#intro">Introduction</a>
-<a href="#theory">Theory</a>
-<a href="#components">Components</a>
-<a href="#applications">Applications</a>
-<a href="#conclusion">Conclusion</a>
+
+<a onclick="show('home')">Home</a>
+<a onclick="show('intro')">Introduction</a>
+<a onclick="show('theory')">Theory</a>
+<a onclick="show('components')">Components</a>
+<a onclick="show('design')">Design</a>
+<a onclick="show('simulation')">Simulation</a>
+<a onclick="show('applications')">Applications</a>
+<a onclick="show('conclusion')">Conclusion</a>
+
 </nav>
 
 <div id="home" class="section">
@@ -53,56 +63,30 @@ box-shadow:0 2px 10px rgba(0,0,0,0.2);
 <h2>Home</h2>
 
 <p>
-This project explains the working principle of an Electrostatic
-Precipitator (ESP). Electrostatic precipitators are pollution
-control devices used to remove dust particles from industrial
-exhaust gases before they are released into the atmosphere.
-</p>
-
-<p>
-Industries such as thermal power plants, cement factories,
-steel plants and chemical plants produce large amounts of
-dust and smoke particles. These particles cause serious air
-pollution problems and affect human health.
-</p>
-
-<p>
-Electrostatic precipitators help reduce this pollution by
-collecting particles using electrostatic forces.
+This project demonstrates the working principle of an Electrostatic
+Precipitator (ESP). It includes theory, explanation and a simple simulation.
 </p>
 
 </div>
 
 
-<div id="intro" class="section">
+<div id="intro" class="section" style="display:none">
 
 <h2>Introduction</h2>
 
 <p>
-Air pollution is one of the most serious environmental problems
-in modern industrial society. Industrial processes release
-large amounts of particulate matter into the air.
+Electrostatic precipitators are devices used to remove dust and smoke
+particles from industrial gases. They use electrostatic forces to collect
+particles on metal plates.
 </p>
 
-<p>
-Electrostatic precipitators are widely used devices that remove
-fine particles from gas streams. They operate using the principle
-of electrostatic attraction between charged particles and
-oppositely charged plates.
-</p>
-
-<p>
-The basic purpose of an ESP is to improve air quality and
-protect the environment by reducing harmful emissions.
-</p>
-
+  
 </div>
 
 
-<div id="theory" class="section">
+<div id="theory" class="section" style="display:none">
 
 <h2>Working Principle</h2>
-
 <p>
 The working of an electrostatic precipitator is based on the principle of electrostatic attraction between charged particles and oppositely charged plates. 
 When a high voltage power supply is applied to the discharge electrodes, a strong electric field is created between the electrodes and the collection plates. 
@@ -156,93 +140,209 @@ They help industries comply with pollution control regulations and contribute to
 </div>
 
 
-<div id="components" class="section">
+<div id="components" class="section" style="display:none">
 
 <h2>Main Components</h2>
 
 <ul>
-<li>High Voltage Power Supply</li>
-<li>Discharge Electrodes</li>
-<li>Collection Plates</li>
-<li>Gas Flow Chamber</li>
-<li>Dust Removal Mechanism</li>
+<li>High voltage power supply</li>
+<li>Discharge electrodes</li>
+<li>Collection plates</li>
+<li>Gas chamber</li>
+<li>Dust removal system</li>
 </ul>
 
-<p>
-The high voltage power supply creates the electric field
-required for particle charging.
-</p>
+</div>
+
+
+<div id="design" class="section" style="display:none">
+
+<h2>Design Methodology</h2>
 
 <p>
-Discharge electrodes produce corona discharge which ionizes
-the air. Collection plates attract and capture the charged
-particles.
-</p>
-
-<p>
-The gas flow chamber allows polluted gases to pass through
-the system while dust removal mechanisms periodically clean
-the collection plates.
+The simulation models particle motion inside an electrostatic field.
+Particles move across the chamber and are attracted toward collection plates.
 </p>
 
 </div>
 
 
-<div id="applications" class="section">
+<div id="simulation" class="section" style="display:none">
+
+<h2>Simulation</h2>
+
+Voltage (kV)
+<input type="range" min="5" max="30" value="15" id="voltage">
+<span id="vvalue">15</span>
+
+<br><br>
+
+Particle Density
+<input type="range" min="10" max="100" value="40" id="density">
+
+<br><br>
+
+Efficiency
+<span id="eff">0%</span>
+
+<br><br>
+
+<canvas id="sim" width="600" height="300"></canvas>
+
+</div>
+
+
+<div id="applications" class="section" style="display:none">
 
 <h2>Applications</h2>
 
-<p>
-Electrostatic precipitators are widely used in industries
-for air pollution control.
-</p>
-
 <ul>
-<li>Thermal power plants</li>
-<li>Cement manufacturing plants</li>
-<li>Steel production industries</li>
-<li>Paper mills</li>
-<li>Chemical processing plants</li>
+<li>Thermal Power Plants</li>
+<li>Cement Industries</li>
+<li>Steel Plants</li>
+<li>Air Pollution Control Systems</li>
 </ul>
-
-<p>
-These systems can remove up to 99 percent of dust particles
-from industrial gas streams.
-</p>
-
-<p>
-Due to their high efficiency and reliability, electrostatic
-precipitators are considered one of the most effective
-pollution control technologies.
-</p>
 
 </div>
 
 
-<div id="conclusion" class="section">
+<div id="conclusion" class="section" style="display:none">
 
 <h2>Conclusion</h2>
 
 <p>
-Electrostatic precipitators play an important role in reducing
-industrial air pollution. By using electrostatic forces to
-capture dust particles, they help improve environmental
-quality and protect human health.
-</p>
-
-<p>
-Understanding the working principle and components of ESP
-systems is important for developing efficient pollution
-control technologies.
-</p>
-
-<p>
-This project demonstrates the basic concept and importance
-of electrostatic precipitators in modern industries.
+Electrostatic precipitators provide an effective method for removing
+particulate matter from industrial emissions. This simulation shows how
+electric fields attract charged particles to collection plates.
 </p>
 
 </div>
 
-</body>
 
+<script>
+
+function show(id){
+
+let sections=document.querySelectorAll(".section");
+
+sections.forEach(s=>s.style.display="none");
+
+document.getElementById(id).style.display="block";
+
+}
+
+const canvas=document.getElementById("sim");
+const ctx=canvas.getContext("2d");
+
+const voltageSlider=document.getElementById("voltage");
+const densitySlider=document.getElementById("density");
+
+const vvalue=document.getElementById("vvalue");
+const eff=document.getElementById("eff");
+
+let particles=[];
+
+function createParticles(){
+
+particles=[];
+
+for(let i=0;i<densitySlider.value;i++){
+
+particles.push({
+x:Math.random()*200,
+y:Math.random()*300,
+vx:1+Math.random(),
+captured:false
+});
+
+}
+
+}
+
+createParticles();
+
+densitySlider.oninput=function(){
+createParticles();
+};
+
+voltageSlider.oninput=function(){
+vvalue.innerText=voltageSlider.value;
+};
+
+function drawPlates(){
+
+ctx.fillStyle="blue";
+ctx.fillRect(250,0,10,300);
+
+ctx.fillStyle="red";
+ctx.fillRect(350,0,10,300);
+
+}
+
+function updateParticles(){
+
+let captured=0;
+
+for(let p of particles){
+
+if(!p.captured){
+
+p.x+=p.vx;
+
+let field=voltageSlider.value/30;
+
+if(p.x>260){
+p.y+=(150-p.y)*0.02*field;
+}
+
+if(p.x>350){
+p.captured=true;
+}
+
+}
+
+if(p.captured) captured++;
+
+}
+
+let efficiency=Math.floor((captured/particles.length)*100);
+eff.innerText=efficiency+"%";
+
+}
+
+function drawParticles(){
+
+ctx.fillStyle="black";
+
+for(let p of particles){
+
+if(!p.captured){
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,3,0,Math.PI*2);
+ctx.fill();
+
+}
+
+}
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,600,300);
+
+drawPlates();
+updateParticles();
+drawParticles();
+
+requestAnimationFrame(animate);
+
+}
+
+animate();
+
+</script>
+
+</body>
 </html>
