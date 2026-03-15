@@ -39,6 +39,15 @@ padding:10px;
 border-radius:6px;
 }
 
+.label{
+position:absolute;
+color:white;
+font-size:14px;
+background:rgba(0,0,0,0.5);
+padding:3px 6px;
+border-radius:4px;
+}
+
 </style>
 
 </head>
@@ -55,48 +64,25 @@ border-radius:6px;
 
 <h2>Introduction</h2>
 <p>
-An electrostatic precipitator (ESP) is a pollution control device used to remove
-dust particles from industrial exhaust gases using electrostatic forces.
+An Electrostatic Precipitator (ESP) is a pollution control device used to remove
+dust and smoke particles from industrial gases using electrostatic forces.
 </p>
 
 <h2>Working Principle</h2>
 
-<p>
-1. Dust-laden gas enters the chamber.
-</p>
-
-<p>
-2. High voltage applied to the ionizing wire produces corona discharge.
-</p>
-
-<p>
-3. Dust particles become electrically charged.
-</p>
-
-<p>
-4. Electric field moves the particles toward collection plates.
-</p>
-
-<p>
-5. Dust accumulates on plates and clean air exits.
-</p>
+<p>1. Dust-laden gas enters the chamber.</p>
+<p>2. High voltage is applied to the ionizing wire.</p>
+<p>3. Corona discharge charges the dust particles.</p>
+<p>4. Electric field pulls particles toward collection plates.</p>
+<p>5. Dust sticks to plates and clean air exits.</p>
 
 <h2>Main Components</h2>
 
 <ul>
-<li>Discharge electrode (ionizing wire)</li>
+<li>Ionizing wire</li>
 <li>Collection plates</li>
-<li>High voltage DC supply</li>
+<li>High voltage DC power supply</li>
 <li>Gas flow chamber</li>
-</ul>
-
-<h2>Applications</h2>
-
-<ul>
-<li>Thermal power plants</li>
-<li>Cement industries</li>
-<li>Steel plants</li>
-<li>Chemical factories</li>
 </ul>
 
 </div>
@@ -119,8 +105,12 @@ Voltage
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div class="label" style="top:100px; left:120px;">Airflow</div>
+<div class="label" style="top:160px; left:120px;">Dust particles</div>
+<div class="label" style="top:200px; left:350px;">Ionizing wire</div>
+<div class="label" style="top:200px; left:500px;">Collection plates</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
 
 <script>
@@ -132,7 +122,7 @@ const scene=new THREE.Scene()
 
 const camera=new THREE.PerspectiveCamera(
 70,
-window.innerWidth/ window.innerHeight,
+window.innerWidth/window.innerHeight,
 0.1,
 1000
 )
@@ -149,9 +139,7 @@ const controls=new THREE.OrbitControls(camera,renderer.domElement)
 controls.enableDamping=true
 
 const light=new THREE.PointLight(0xffffff,1)
-
 light.position.set(20,30,20)
-
 scene.add(light)
 
 const chamberGeo=new THREE.BoxGeometry(90,30,30)
@@ -163,11 +151,9 @@ opacity:0.15
 })
 
 const chamber=new THREE.Mesh(chamberGeo,chamberMat)
-
 scene.add(chamber)
 
 const plateGeo=new THREE.BoxGeometry(1,28,22)
-
 const plateMat=new THREE.MeshStandardMaterial({color:0xaaaaaa})
 
 let plates=[]
@@ -185,7 +171,6 @@ plates.push(plate)
 }
 
 const wireGeo=new THREE.CylinderGeometry(0.2,0.2,26,16)
-
 const wireMat=new THREE.MeshStandardMaterial({color:0xffff00})
 
 const wire=new THREE.Mesh(wireGeo,wireMat)
@@ -216,7 +201,6 @@ let particles=[]
 function createParticle(){
 
 const geo=new THREE.SphereGeometry(0.35,8,8)
-
 const mat=new THREE.MeshBasicMaterial({color:0xff4444})
 
 const p=new THREE.Mesh(geo,mat)
@@ -252,7 +236,6 @@ p.position.x+=0.35
 if(p.position.x>-6 && !p.charged){
 
 p.material.color.set(0x3399ff)
-
 p.charged=true
 
 }
@@ -262,7 +245,6 @@ let field=voltage*0.003
 if(p.position.x>-10){
 
 p.position.x+=(10-p.position.x)*field
-
 p.position.y+=(0-p.position.y)*field*0.25
 
 }
@@ -286,7 +268,6 @@ p.position.y=Math.random()*20-10
 p.position.z=Math.random()*20-10
 
 p.material.color.set(0xff4444)
-
 p.charged=false
 
 }
