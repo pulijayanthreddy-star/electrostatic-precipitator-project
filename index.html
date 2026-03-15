@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Advanced ESP Simulator</title>
+
+<title>3D Electrostatic Precipitator Simulator</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
-background:#111;
+background:#101010;
 color:white;
 }
 
-#ui{
+#panel{
 position:absolute;
 top:10px;
 left:10px;
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.7);
 padding:15px;
 border-radius:8px;
 }
@@ -26,11 +28,13 @@ margin-top:10px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div id="ui">
+<div id="panel">
+
 <h3>ESP Controls</h3>
 
 <label>
@@ -39,22 +43,17 @@ Voltage
 </label>
 
 <label>
-Particle Rate
-<input type="range" id="rate" min="10" max="300" value="120">
-</label>
-
-<label>
 Mode
 <select id="mode">
 <option value="dc">DC</option>
-<option value="ac">Alternating</option>
+<option value="ac">AC</option>
 </select>
 </label>
 
 <button onclick="running=true">Start</button>
 <button onclick="running=false">Stop</button>
 
-<p>Collected: <span id="count">0</span></p>
+<p>Collected particles: <span id="count">0</span></p>
 
 </div>
 
@@ -62,7 +61,6 @@ Mode
 
 <script>
 
-let voltage=40
 let running=true
 let collected=0
 
@@ -75,25 +73,35 @@ window.innerWidth/window.innerHeight,
 1000
 )
 
-const renderer=new THREE.WebGLRenderer()
+const renderer=new THREE.WebGLRenderer({antialias:true})
 renderer.setSize(window.innerWidth,window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
 camera.position.z=50
+camera.position.y=10
 
 const light=new THREE.PointLight(0xffffff,1)
 light.position.set(20,20,20)
 scene.add(light)
 
-const plateGeometry=new THREE.BoxGeometry(1,30,20)
+const chamber=new THREE.BoxGeometry(80,30,30)
+const chamberMaterial=new THREE.MeshBasicMaterial({
+color:0x333333,
+wireframe:true
+})
+
+const box=new THREE.Mesh(chamber,chamberMaterial)
+scene.add(box)
+
+const plateGeometry=new THREE.BoxGeometry(1,28,20)
 const plateMaterial=new THREE.MeshStandardMaterial({color:0x888888})
 
 const plate1=new THREE.Mesh(plateGeometry,plateMaterial)
-plate1.position.x=0
+plate1.position.x=5
 scene.add(plate1)
 
 const plate2=new THREE.Mesh(plateGeometry,plateMaterial)
-plate2.position.x=20
+plate2.position.x=25
 scene.add(plate2)
 
 let particles=[]
@@ -105,7 +113,7 @@ const material=new THREE.MeshBasicMaterial({color:0xff4444})
 
 const p=new THREE.Mesh(geometry,material)
 
-p.position.x=-40
+p.position.x=-35
 p.position.y=Math.random()*20-10
 p.position.z=Math.random()*20-10
 
@@ -114,23 +122,13 @@ particles.push(p)
 
 }
 
-for(let i=0;i<120;i++) createParticle()
-
-function updateControls(){
-
-voltage=document.getElementById("voltage").value
-let rate=document.getElementById("rate").value
-
-while(particles.length<rate) createParticle()
-
-}
+for(let i=0;i<150;i++) createParticle()
 
 function animate(){
 
 requestAnimationFrame(animate)
 
-updateControls()
-
+let voltage=document.getElementById("voltage").value
 let mode=document.getElementById("mode").value
 
 particles.forEach(p=>{
@@ -139,24 +137,25 @@ if(!running) return
 
 p.position.x+=0.3
 
-let field=voltage*0.002
+let field=voltage*0.003
 
 if(mode==="ac") field*=Math.sin(Date.now()*0.005)
 
-if(p.position.x>-5){
+if(p.position.x>-10){
 
-p.position.x+=(0-p.position.x)*field
+p.position.x+=(5-p.position.x)*field
 p.position.y+=(0-p.position.y)*field*0.2
 
 }
 
-if(Math.abs(p.position.x)<0.5){
+if(Math.abs(p.position.x-5)<0.5){
 
 collected++
 document.getElementById("count").innerText=collected
 
-p.position.x=-40
+p.position.x=-35
 p.position.y=Math.random()*20-10
+p.position.z=Math.random()*20-10
 
 }
 
