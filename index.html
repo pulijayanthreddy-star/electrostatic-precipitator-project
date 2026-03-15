@@ -1,345 +1,302 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Electrostatic Precipitator Simulator</title>
+<title>Electrostatic Precipitator Simulation</title>
 
 <style>
+
 body{
-margin:0;
 font-family:Arial;
-background:#111;
-color:white;
+background:#f4f4f4;
+margin:40px;
 }
 
-.container{
-display:flex;
-height:100vh;
+nav{
+margin-bottom:30px;
 }
 
-.simulation{
-flex:2;
-background:black;
+nav a{
+margin-right:15px;
+font-weight:bold;
+text-decoration:none;
+color:#003366;
+cursor:pointer;
 }
 
-.theory{
-flex:1;
-background:#1a1a1a;
-padding:20px;
-overflow-y:auto;
-line-height:1.6;
+.section{
+background:white;
+padding:25px;
+margin-bottom:30px;
+border-radius:8px;
+box-shadow:0 2px 10px rgba(0,0,0,0.2);
 }
 
-#panel{
-position:absolute;
-top:10px;
-left:10px;
-background:rgba(0,0,0,0.6);
-padding:12px;
-border-radius:6px;
-font-size:14px;
+canvas{
+border:2px solid black;
+background:white;
 }
 
-h1,h2{
-color:#66d9ff;
-}
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
+<h1>Electrostatic Precipitator Project</h1>
 
-<div class="simulation" id="simArea"></div>
+<nav>
 
-<div class="theory">
+<a onclick="show('home')">Home</a>
+<a onclick="show('intro')">Introduction</a>
+<a onclick="show('theory')">Theory</a>
+<a onclick="show('components')">Components</a>
+<a onclick="show('design')">Design</a>
+<a onclick="show('simulation')">Simulation</a>
+<a onclick="show('applications')">Applications</a>
+<a onclick="show('conclusion')">Conclusion</a>
 
-<h1>Electrostatic Precipitator</h1>
+</nav>
 
-<h2>1. Introduction</h2>
-<p>
-An Electrostatic Precipitator (ESP) is an air pollution control device used to remove
-fine dust particles and smoke from industrial exhaust gases using electrostatic forces.
-It is widely used in industries such as thermal power plants, cement factories,
-steel plants, and chemical industries to reduce air pollution.
-</p>
+<div id="home" class="section">
 
-<p>
-Industries release large amounts of particulate matter during manufacturing
-processes. If these particles are released directly into the atmosphere they can
-cause severe environmental and health problems. Electrostatic precipitators capture
-these particles before the gases are released.
-</p>
-
-<h2>2. Need for Electrostatic Precipitators</h2>
+<h2>Home</h2>
 
 <p>
-Industrial emissions contain dust, smoke, ash, and other harmful particles.
-These pollutants contribute to air pollution and can cause respiratory diseases
-in humans and animals.
+This project demonstrates the working principle of an Electrostatic
+Precipitator (ESP). It includes theory, explanation and a simple simulation.
 </p>
+
+</div>
+
+
+<div id="intro" class="section" style="display:none">
+
+<h2>Introduction</h2>
 
 <p>
-Electrostatic precipitators help industries control these emissions and meet
-environmental regulations by removing particulate matter from exhaust gases.
+Electrostatic precipitators are devices used to remove dust and smoke
+particles from industrial gases. They use electrostatic forces to collect
+particles on metal plates.
 </p>
 
-<h2>3. Main Components</h2>
+</div>
+
+
+<div id="theory" class="section" style="display:none">
+
+<h2>Working Principle</h2>
+
+<p>
+High voltage electrodes ionize the air and charge dust particles.
+The charged particles move toward oppositely charged plates and
+stick to them, removing them from the air stream.
+</p>
+
+</div>
+
+
+<div id="components" class="section" style="display:none">
+
+<h2>Main Components</h2>
 
 <ul>
-<li>Discharge electrode (Ionizing wire)</li>
+<li>High voltage power supply</li>
+<li>Discharge electrodes</li>
 <li>Collection plates</li>
-<li>High voltage DC power supply</li>
-<li>Gas flow chamber</li>
-<li>Dust hopper</li>
+<li>Gas chamber</li>
+<li>Dust removal system</li>
 </ul>
 
-<h2>4. Working Principle</h2>
+</div>
+
+
+<div id="design" class="section" style="display:none">
+
+<h2>Design Methodology</h2>
 
 <p>
-1. Dust-laden gas enters the ESP chamber.
-</p>
-
-<p>
-2. High voltage applied to the discharge electrode produces corona discharge.
-</p>
-
-<p>
-3. The corona generates ions that charge the dust particles.
-</p>
-
-<p>
-4. The electric field between the wire and the plates causes the charged particles
-to move toward the collecting plates.
-</p>
-
-<p>
-5. Dust particles accumulate on the plates and clean gas exits the system.
-</p>
-
-<h2>5. Advantages</h2>
-
-<ul>
-<li>High efficiency up to 99% particle removal</li>
-<li>Low pressure drop</li>
-<li>Suitable for high temperature gases</li>
-<li>Long operating life</li>
-</ul>
-
-<h2>6. Disadvantages</h2>
-
-<ul>
-<li>High installation cost</li>
-<li>Requires high voltage power supply</li>
-<li>Less effective for certain particle types</li>
-</ul>
-
-<h2>7. Applications</h2>
-
-<ul>
-<li>Thermal power plants</li>
-<li>Cement industries</li>
-<li>Steel plants</li>
-<li>Chemical industries</li>
-<li>Paper and pulp mills</li>
-</ul>
-
-<h2>8. Conclusion</h2>
-
-<p>
-Electrostatic precipitators are highly effective devices for controlling
-industrial air pollution. By using electrostatic forces to capture dust
-particles, ESP systems significantly reduce particulate emissions and
-help industries protect the environment.
+The simulation models particle motion inside an electrostatic field.
+Particles move across the chamber and are attracted toward collection plates.
 </p>
 
 </div>
 
+
+<div id="simulation" class="section" style="display:none">
+
+<h2>Simulation</h2>
+
+Voltage (kV)
+<input type="range" min="5" max="30" value="15" id="voltage">
+<span id="vvalue">15</span>
+
+<br><br>
+
+Particle Density
+<input type="range" min="10" max="100" value="40" id="density">
+
+<br><br>
+
+Efficiency
+<span id="eff">0%</span>
+
+<br><br>
+
+<canvas id="sim" width="600" height="300"></canvas>
+
 </div>
 
-<div id="panel">
 
-Voltage
-<input type="range" id="voltage" min="1" max="100" value="40">
+<div id="applications" class="section" style="display:none">
 
-<p>Collected: <span id="count">0</span></p>
-<p>Efficiency: <span id="eff">0</span>%</p>
+<h2>Applications</h2>
+
+<ul>
+<li>Thermal Power Plants</li>
+<li>Cement Industries</li>
+<li>Steel Plants</li>
+<li>Air Pollution Control Systems</li>
+</ul>
+
+</div>
+
+
+<div id="conclusion" class="section" style="display:none">
+
+<h2>Conclusion</h2>
 
 <p>
-🟡 Airflow<br>
-🔴 Dust particles<br>
-🔵 Charged particles<br>
-🟢 Collected particles
+Electrostatic precipitators provide an effective method for removing
+particulate matter from industrial emissions. This simulation shows how
+electric fields attract charged particles to collection plates.
 </p>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
 
 <script>
 
-let collected=0
-let totalParticles=0
+function show(id){
 
-const scene=new THREE.Scene()
+let sections=document.querySelectorAll(".section");
 
-const camera=new THREE.PerspectiveCamera(
-70,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-)
+sections.forEach(s=>s.style.display="none");
 
-const renderer=new THREE.WebGLRenderer({antialias:true})
-renderer.setSize(window.innerWidth*0.66,window.innerHeight)
-
-document.getElementById("simArea").appendChild(renderer.domElement)
-
-camera.position.set(40,20,60)
-
-const controls=new THREE.OrbitControls(camera,renderer.domElement)
-controls.enableDamping=true
-
-const light=new THREE.PointLight(0xffffff,1)
-light.position.set(20,30,20)
-scene.add(light)
-
-const chamberGeo=new THREE.BoxGeometry(90,30,30)
-
-const chamberMat=new THREE.MeshBasicMaterial({
-color:0x55aaff,
-transparent:true,
-opacity:0.15
-})
-
-const chamber=new THREE.Mesh(chamberGeo,chamberMat)
-scene.add(chamber)
-
-const plateGeo=new THREE.BoxGeometry(1,28,22)
-const plateMat=new THREE.MeshStandardMaterial({color:0xaaaaaa})
-
-let plates=[]
-
-for(let i=0;i<3;i++){
-
-const plate=new THREE.Mesh(plateGeo,plateMat)
-
-plate.position.x=10 + i*10
-
-scene.add(plate)
-
-plates.push(plate)
+document.getElementById(id).style.display="block";
 
 }
 
-const wireGeo=new THREE.CylinderGeometry(0.2,0.2,26,16)
-const wireMat=new THREE.MeshStandardMaterial({color:0xffff00})
+const canvas=document.getElementById("sim");
+const ctx=canvas.getContext("2d");
 
-const wire=new THREE.Mesh(wireGeo,wireMat)
-wire.rotation.z=Math.PI/2
-wire.position.x=-5
+const voltageSlider=document.getElementById("voltage");
+const densitySlider=document.getElementById("density");
 
-scene.add(wire)
+const vvalue=document.getElementById("vvalue");
+const eff=document.getElementById("eff");
 
-let arrows=[]
+let particles=[];
 
-for(let i=0;i<10;i++){
+function createParticles(){
 
-const dir=new THREE.Vector3(1,0,0)
-const origin=new THREE.Vector3(-30,i*3-15,0)
+particles=[];
 
-const arrow=new THREE.ArrowHelper(dir,origin,5,0xffff00)
+for(let i=0;i<densitySlider.value;i++){
 
-scene.add(arrow)
-
-arrows.push(arrow)
-
-}
-
-let particles=[]
-
-function createParticle(){
-
-const geo=new THREE.SphereGeometry(0.35,8,8)
-const mat=new THREE.MeshBasicMaterial({color:0xff4444})
-
-const p=new THREE.Mesh(geo,mat)
-
-p.position.x=-40
-p.position.y=Math.random()*20-10
-p.position.z=Math.random()*20-10
-
-p.charged=false
-
-scene.add(p)
-
-particles.push(p)
-
-totalParticles++
+particles.push({
+x:Math.random()*200,
+y:Math.random()*300,
+vx:1+Math.random(),
+captured:false
+});
 
 }
 
-for(let i=0;i<200;i++) createParticle()
+}
+
+createParticles();
+
+densitySlider.oninput=function(){
+createParticles();
+};
+
+voltageSlider.oninput=function(){
+vvalue.innerText=voltageSlider.value;
+};
+
+function drawPlates(){
+
+ctx.fillStyle="blue";
+ctx.fillRect(250,0,10,300);
+
+ctx.fillStyle="red";
+ctx.fillRect(350,0,10,300);
+
+}
+
+function updateParticles(){
+
+let captured=0;
+
+for(let p of particles){
+
+if(!p.captured){
+
+p.x+=p.vx;
+
+let field=voltageSlider.value/30;
+
+if(p.x>260){
+p.y+=(150-p.y)*0.02*field;
+}
+
+if(p.x>350){
+p.captured=true;
+}
+
+}
+
+if(p.captured) captured++;
+
+}
+
+let efficiency=Math.floor((captured/particles.length)*100);
+eff.innerText=efficiency+"%";
+
+}
+
+function drawParticles(){
+
+ctx.fillStyle="black";
+
+for(let p of particles){
+
+if(!p.captured){
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,3,0,Math.PI*2);
+ctx.fill();
+
+}
+
+}
+
+}
 
 function animate(){
 
-requestAnimationFrame(animate)
+ctx.clearRect(0,0,600,300);
 
-controls.update()
+drawPlates();
+updateParticles();
+drawParticles();
 
-let voltage=document.getElementById("voltage").value
-
-particles.forEach(p=>{
-
-p.position.x+=0.35
-
-if(p.position.x>-6 && !p.charged){
-
-p.material.color.set(0x3399ff)
-p.charged=true
+requestAnimationFrame(animate);
 
 }
 
-let field=voltage*0.003
-
-if(p.position.x>-10){
-
-p.position.x+=(10-p.position.x)*field
-p.position.y+=(0-p.position.y)*field*0.25
-
-}
-
-plates.forEach(pl=>{
-
-if(Math.abs(p.position.x-pl.position.x)<0.7){
-
-p.material.color.set(0x00ff66)
-
-collected++
-
-document.getElementById("count").innerText=collected
-
-let eff=Math.floor((collected/totalParticles)*100)
-document.getElementById("eff").innerText=eff
-
-p.position.x=-40
-p.position.y=Math.random()*20-10
-p.position.z=Math.random()*20-10
-
-p.material.color.set(0xff4444)
-p.charged=false
-
-}
-
-})
-
-})
-
-renderer.render(scene,camera)
-
-}
-
-animate()
+animate();
 
 </script>
 
