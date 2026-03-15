@@ -11,6 +11,54 @@
 
 <h2>Working Principle</h2>
 <p>High voltage wires charge particles in air. The charged particles move toward collection plates and stick to them.</p>
+<h2>Electrostatic Precipitator Simulation</h2>
+
+<canvas id="sim" width="600" height="300" style="border:1px solid black;"></canvas>
+<script>
+
+const canvas = document.getElementById("sim");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+for(let i=0;i<40;i++){
+    particles.push({
+        x:Math.random()*600,
+        y:Math.random()*300
+    });
+}
+
+function draw(){
+
+    ctx.clearRect(0,0,600,300);
+
+    ctx.fillStyle="red";
+
+    for(let p of particles){
+
+        p.x += 1;
+
+        if(p.x > 300){
+            p.y += (150-p.y)*0.05;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,3,0,Math.PI*2);
+        ctx.fill();
+
+        if(p.x>600){
+            p.x=0;
+            p.y=Math.random()*300;
+        }
+    }
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+</script>
 
 </body>
 </html>
+
