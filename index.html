@@ -1,98 +1,174 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>Electrostatic Precipitator Simulation</title>
+<title>Advanced ESP Simulator</title>
 
 <style>
-
 body{
-font-family: Arial;
-text-align:center;
-background:#f2f2f2;
+margin:0;
+font-family:Arial;
+background:#111;
+color:white;
 }
 
-canvas{
-background:white;
-margin-top:20px;
+#ui{
+position:absolute;
+top:10px;
+left:10px;
+background:rgba(0,0,0,0.6);
+padding:15px;
+border-radius:8px;
+}
+
+label{
+display:block;
+margin-top:10px;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<h1>Electrostatic Precipitator Simulation</h1>
+<div id="ui">
+<h3>ESP Controls</h3>
 
-<p>This simulation shows how charged dust particles move toward collection plates.</p>
+<label>
+Voltage
+<input type="range" id="voltage" min="1" max="100" value="40">
+</label>
 
-<canvas id="sim" width="700" height="300"></canvas>
+<label>
+Particle Rate
+<input type="range" id="rate" min="10" max="300" value="120">
+</label>
+
+<label>
+Mode
+<select id="mode">
+<option value="dc">DC</option>
+<option value="ac">Alternating</option>
+</select>
+</label>
+
+<button onclick="running=true">Start</button>
+<button onclick="running=false">Stop</button>
+
+<p>Collected: <span id="count">0</span></p>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 
-const canvas = document.getElementById("sim");
-const ctx = canvas.getContext("2d");
+let voltage=40
+let running=true
+let collected=0
 
-let particles = [];
+const scene=new THREE.Scene()
 
-for(let i=0;i<60;i++){
-particles.push({
-x:Math.random()*150,
-y:Math.random()*300,
-collected:false
-});
-}
+const camera=new THREE.PerspectiveCamera(
+70,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
 
-function draw(){
+const renderer=new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth,window.innerHeight)
+document.body.appendChild(renderer.domElement)
 
-ctx.clearRect(0,0,700,300);
+camera.position.z=50
 
-ctx.fillStyle="black";
-ctx.fillText("Dust Inlet",30,20);
+const light=new THREE.PointLight(0xffffff,1)
+light.position.set(20,20,20)
+scene.add(light)
 
-ctx.fillStyle="gray";
+const plateGeometry=new THREE.BoxGeometry(1,30,20)
+const plateMaterial=new THREE.MeshStandardMaterial({color:0x888888})
 
-ctx.fillRect(350,0,5,300);
-ctx.fillRect(600,0,5,300);
+const plate1=new THREE.Mesh(plateGeometry,plateMaterial)
+plate1.position.x=0
+scene.add(plate1)
 
-ctx.fillStyle="red";
+const plate2=new THREE.Mesh(plateGeometry,plateMaterial)
+plate2.position.x=20
+scene.add(plate2)
 
-for(let p of particles){
+let particles=[]
 
-if(!p.collected){
+function createParticle(){
 
-p.x += 1.5;
+const geometry=new THREE.SphereGeometry(0.25,8,8)
+const material=new THREE.MeshBasicMaterial({color:0xff4444})
 
-if(p.x > 350){
-p.x += (350 - p.x)*0.05;
-}
+const p=new THREE.Mesh(geometry,material)
 
-if(Math.abs(p.x-350) < 3){
-p.collected = true;
-}
+p.position.x=-40
+p.position.y=Math.random()*20-10
+p.position.z=Math.random()*20-10
 
-}
-
-ctx.beginPath();
-ctx.arc(p.x,p.y,3,0,Math.PI*2);
-ctx.fill();
-
-if(p.x > 690){
-p.x = Math.random()*150;
-p.y = Math.random()*300;
-p.collected=false;
-}
+scene.add(p)
+particles.push(p)
 
 }
 
-requestAnimationFrame(draw);
+for(let i=0;i<120;i++) createParticle()
+
+function updateControls(){
+
+voltage=document.getElementById("voltage").value
+let rate=document.getElementById("rate").value
+
+while(particles.length<rate) createParticle()
+
 }
 
-draw();
+function animate(){
+
+requestAnimationFrame(animate)
+
+updateControls()
+
+let mode=document.getElementById("mode").value
+
+particles.forEach(p=>{
+
+if(!running) return
+
+p.position.x+=0.3
+
+let field=voltage*0.002
+
+if(mode==="ac") field*=Math.sin(Date.now()*0.005)
+
+if(p.position.x>-5){
+
+p.position.x+=(0-p.position.x)*field
+p.position.y+=(0-p.position.y)*field*0.2
+
+}
+
+if(Math.abs(p.position.x)<0.5){
+
+collected++
+document.getElementById("count").innerText=collected
+
+p.position.x=-40
+p.position.y=Math.random()*20-10
+
+}
+
+})
+
+renderer.render(scene,camera)
+
+}
+
+animate()
 
 </script>
 
 </body>
-
 </html>
